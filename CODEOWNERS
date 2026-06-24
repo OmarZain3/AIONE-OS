@@ -1,0 +1,26 @@
+# CODEOWNERS — https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Replace placeholder teams with real GitHub teams or usernames before enforcing reviews.
+# Last matching pattern takes precedence.
+
+# Default owners for the entire repository
+*                                   @aione/maintainers
+
+# Applications
+/apps/                              @aione/maintainers
+
+# Backend services
+/services/                          @aione/maintainers
+
+# Shared packages
+/packages/                          @aione/maintainers
+
+# Infrastructure and deployment
+/infrastructure/                    @aione/platform
+
+# Documentation and standards
+/docs/                              @aione/maintainers
+/.github/                           @aione/maintainers
+/CODEOWNERS                         @aione/maintainers
+/CONTRIBUTING.md                    @aione/maintainers
+/SECURITY.md                        @aione/security

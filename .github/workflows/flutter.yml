@@ -1,0 +1,88 @@
+name: Flutter
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    name: Discover Projects
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_projects: ${{ steps.set-matrix.outputs.has_projects }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build project matrix
+        id: set-matrix
+        run: |
+          PROJECTS=$(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null \
+            | xargs -I{} dirname {} \
+            | sort -u \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+          if [ "$PROJECTS" = "[]" ] || [ -z "$PROJECTS" ]; then
+            echo "has_projects=false" >> "$GITHUB_OUTPUT"
+            echo "matrix={\"project\":[]}" >> "$GITHUB_OUTPUT"
+            echo "No Flutter projects found — validation will be skipped"
+          else
+            echo "has_projects=true" >> "$GITHUB_OUTPUT"
+            echo "matrix={\"project\":$PROJECTS}" >> "$GITHUB_OUTPUT"
+            echo "Discovered Flutter projects: $PROJECTS"
+          fi
+
+  analyze:
+    name: Analyze
+    needs: discover
+    if: needs.discover.outputs.has_projects == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Resolve dependencies
+        working-directory: ${{ matrix.project }}
+        run: flutter pub get
+
+      - name: Verify formatting
+        working-directory: ${{ matrix.project }}
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        working-directory: ${{ matrix.project }}
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Run tests
+        working-directory: ${{ matrix.project }}
+        run: |
+          if [ -d test ]; then
+            flutter test
+          else
+            echo "No test directory — skipping tests"
+          fi
+
+  skip:
+    name: Skip (No Projects)
+    needs: discover
+    if: needs.discover.outputs.has_projects != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip Flutter validation
+        run: echo "No pubspec.yaml found under apps/ or packages/ — Flutter CI skipped"

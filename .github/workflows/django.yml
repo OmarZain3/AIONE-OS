@@ -1,0 +1,133 @@
+name: Django
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    name: Discover Projects
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_projects: ${{ steps.set-matrix.outputs.has_projects }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build project matrix
+        id: set-matrix
+        run: |
+          PROJECTS=$(find services packages -name manage.py -not -path "*/.*" 2>/dev/null \
+            | xargs -I{} dirname {} \
+            | sort -u \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+          if [ "$PROJECTS" = "[]" ] || [ -z "$PROJECTS" ]; then
+            echo "has_projects=false" >> "$GITHUB_OUTPUT"
+            echo "matrix={\"project\":[]}" >> "$GITHUB_OUTPUT"
+            echo "No Django projects found — validation will be skipped"
+          else
+            echo "has_projects=true" >> "$GITHUB_OUTPUT"
+            echo "matrix={\"project\":$PROJECTS}" >> "$GITHUB_OUTPUT"
+            echo "Discovered Django projects: $PROJECTS"
+          fi
+
+  lint:
+    name: Python Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: pip install ruff==0.8.4
+
+      - name: Ruff check
+        run: |
+          if find services packages -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+            ruff check services packages
+          else
+            echo "No Python files found — skipping Ruff"
+          fi
+
+      - name: Ruff format check
+        run: |
+          if find services packages -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+            ruff format --check services packages
+          else
+            echo "No Python files found — skipping format check"
+          fi
+
+  validate:
+    name: Django Check
+    needs: discover
+    if: needs.discover.outputs.has_projects == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            ${{ matrix.project }}/requirements*.txt
+            requirements*.txt
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: |
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          elif [ -f requirements/dev.txt ]; then
+            pip install -r requirements/dev.txt
+          else
+            pip install django ruff
+          fi
+
+      - name: Django system check
+        working-directory: ${{ matrix.project }}
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
+          SECRET_KEY: ci-only-not-for-production
+          DEBUG: "false"
+          DATABASE_URL: sqlite:///tmp/ci.sqlite3
+        run: python manage.py check --deploy
+
+      - name: Run tests
+        working-directory: ${{ matrix.project }}
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
+          SECRET_KEY: ci-only-not-for-production
+          DEBUG: "false"
+          DATABASE_URL: sqlite:///tmp/ci.sqlite3
+        run: |
+          if [ -d tests ] || find . -path "*/test_*.py" -o -path "*/tests.py" 2>/dev/null | grep -q .; then
+            python manage.py test --verbosity 1
+          else
+            echo "No tests found — skipping"
+          fi
+
+  skip:
+    name: Skip (No Projects)
+    needs: discover
+    if: needs.discover.outputs.has_projects != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip Django validation
+        run: echo "No manage.py found under services/ or packages/ — Django CI skipped"

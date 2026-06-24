@@ -1,0 +1,87 @@
+# AIONE pre-commit configuration
+# Install: pre-commit install && pre-commit install --hook-type commit-msg
+# Run all:  pre-commit run --all-files
+
+default_language_version:
+  python: python3.12
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.7.3
+    hooks:
+      - id: editorconfig-checker
+        alias: ec
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [-d, "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^(services|packages|tests|scripts)/
+      - id: ruff-format
+        files: ^(services|packages|tests|scripts)/
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.1.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: adr-required-sections
+        name: ADR required sections
+        entry: bash -c 'ADR_DIR=docs/adr; REQUIRED="Status|Context|Decision|Alternatives|Consequences|Future Review"; FAILED=0; for f in "$ADR_DIR"/[0-9]*.md; do [ -f "$f" ] || continue; for s in $REQUIRED; do grep -q "^## $s" "$f" || { echo "Missing ## $s in $f"; FAILED=1; }; done; done; exit $FAILED'
+        language: system
+        pass_filenames: false
+        files: ^docs/adr/[0-9].*\.md$
+
+      - id: flutter-format
+        name: Flutter format check
+        entry: bash -c 'command -v flutter >/dev/null 2>&1 || { echo "Flutter not installed — skipping"; exit 0; }; FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && dart format --output=none --set-exit-if-changed .) || FAILED=1; done < <(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); exit $FAILED'
+        language: system
+        pass_filenames: false
+        files: \.dart$
+
+      - id: flutter-analyze
+        name: Flutter analyze
+        entry: bash -c 'command -v flutter >/dev/null 2>&1 || { echo "Flutter not installed — skipping"; exit 0; }; FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && flutter pub get >/dev/null && flutter analyze --fatal-infos --fatal-warnings) || FAILED=1; done < <(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); exit $FAILED'
+        language: system
+        pass_filenames: false
+        files: \.(dart|yaml)$
+
+      - id: django-check
+        name: Django system check
+        entry: bash -c 'FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && SECRET_KEY=pre-commit DEBUG=false DATABASE_URL=sqlite:///tmp/precommit.sqlite3 python manage.py check) || FAILED=1; done < <(find services packages -name manage.py -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); [ $FAILED -eq 0 ] || exit 1; echo "No Django projects or all checks passed"'
+        language: system
+        pass_filenames: false
+        files: ^(services|packages)/.*\.py$

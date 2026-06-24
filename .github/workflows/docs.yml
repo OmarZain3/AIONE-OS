@@ -1,0 +1,96 @@
+name: Documentation
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli@0.43.0
+
+      - name: Lint Markdown
+        run: |
+          markdownlint "**/*.md" \
+            --ignore node_modules \
+            --config .markdownlint.json 2>/dev/null || \
+          markdownlint "**/*.md" --ignore node_modules
+
+  adr-structure:
+    name: ADR Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate ADR required sections
+        run: |
+          set -euo pipefail
+          REQUIRED_SECTIONS=(
+            "## Status"
+            "## Context"
+            "## Decision"
+            "## Alternatives"
+            "## Consequences"
+            "## Future Review"
+          )
+          ADR_DIR="docs/adr"
+          FOUND=0
+          FAILED=0
+
+          for adr in "$ADR_DIR"/[0-9]*.md; do
+            [ -f "$adr" ] || continue
+            FOUND=$((FOUND + 1))
+            echo "Validating $adr"
+            for section in "${REQUIRED_SECTIONS[@]}"; do
+              if ! grep -q "^${section}" "$adr"; then
+                echo "::error file=${adr}::Missing required section: ${section}"
+                FAILED=1
+              fi
+            done
+          done
+
+          if [ "$FOUND" -eq 0 ]; then
+            echo "No numbered ADRs found — skipping structure validation"
+            exit 0
+          fi
+
+          if [ "$FAILED" -ne 0 ]; then
+            exit 1
+          fi
+          echo "All $FOUND ADR(s) contain required sections"
+
+  yaml:
+    name: YAML Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install yamllint
+        run: pip install yamllint==1.35.1
+
+      - name: Lint YAML files
+        run: |
+          yamllint -d "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}" \
+            .github/ docker-compose.yml pre-commit-config.yaml 2>/dev/null || \
+          yamllint .github/ docker-compose.yml pre-commit-config.yaml
