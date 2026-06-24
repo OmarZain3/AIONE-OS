@@ -20,8 +20,8 @@ Use the template below. File naming: `NNNN-short-title.md` (zero-padded sequence
 ```
 docs/adr/
 ├── README.md
-├── 0001-record-architecture-decisions.md
-├── 0002-example-decision.md
+├── 0001-repository-strategy.md
+├── 0002-flutter-architecture.md
 └── ...
 ```
 
@@ -65,6 +65,10 @@ What is the change being proposed or enacted?
 
 ## Index
 
-| ADR   | Title                              | Status   |
-| ----- | ---------------------------------- | -------- |
-| —     | No ADRs recorded yet               | —        |
+| ADR | Title | Status | Date |
+| --- | ----- | ------ | ---- |
+| [0001](0001-repository-strategy.md) | Repository Strategy | Accepted | 2026-06-24 |
+| [0002](0002-flutter-architecture.md) | Flutter Architecture | Accepted | 2026-06-24 |
+| [0003](0003-django-architecture.md) | Django Architecture | Accepted | 2026-06-24 |
+| [0004](0004-generator-driven-development.md) | Generator-Driven Development | Accepted | 2026-06-24 |
+| [0005](0005-knowledge-graph.md) | Knowledge Graph | Accepted | 2026-06-24 |

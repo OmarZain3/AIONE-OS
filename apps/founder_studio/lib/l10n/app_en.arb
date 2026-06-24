@@ -1,0 +1,90 @@
+{
+  "@@locale": "en",
+  "appTitle": "Founder Studio",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "splashLoading": "Loading Founder Studio…",
+  "@splashLoading": {
+    "description": "Splash screen loading message"
+  },
+  "healthTitle": "Health",
+  "healthStatusLabel": "Status",
+  "healthStatusOk": "OK",
+  "healthStatusUnknown": "Unknown",
+  "healthBackendLabel": "Backend",
+  "healthBackendReachable": "Reachable",
+  "healthBackendUnreachable": "Unreachable",
+  "navHealth": "Health",
+  "navDashboard": "Dashboard",
+  "navSettings": "Settings",
+  "navProfile": "Profile",
+  "loginSubtitle": "Sign in to continue building your venture",
+  "loginEmailLabel": "Email",
+  "loginPasswordLabel": "Password",
+  "loginEmailRequired": "Email is required",
+  "loginPasswordRequired": "Password is required",
+  "loginAction": "Sign in",
+  "logoutAction": "Sign out",
+  "dismiss": "Dismiss",
+  "dashboardTitle": "Dashboard",
+  "settingsTitle": "Settings",
+  "settingsThemeLabel": "Theme",
+  "settingsThemeSystem": "System",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsLanguageLabel": "Language",
+  "languageEnglish": "English",
+  "languageArabic": "Arabic",
+  "profileTitle": "Profile",
+  "profileNameLabel": "Name",
+  "profileStatusLabel": "Status",
+  "profileActive": "Active",
+  "profileInactive": "Inactive",
+  "profilePlaceholderNote": "Extended profile management will be available in a future release.",
+  "connectionChecking": "Checking connection…",
+  "connectionOnline": "Connected",
+  "connectionOffline": "Offline",
+  "backendVersionLabel": "Backend version",
+  "backendVersionUnavailable": "Unavailable",
+  "emptyProjectsTitle": "No projects yet",
+  "emptyProjectsDescription": "Create your first venture project to get started with Founder Studio.",
+  "emptyProjectsAction": "Create project",
+  "projectSearchHint": "Search projects…",
+  "projectNameLabel": "Name",
+  "projectNameRequired": "Project name is required",
+  "projectDescriptionLabel": "Description",
+  "projectStatusLabel": "Status",
+  "projectStatusDraft": "Draft",
+  "projectStatusActive": "Active",
+  "projectStatusOnHold": "On hold",
+  "projectStatusArchived": "Archived",
+  "projectColorLabel": "Color",
+  "projectIconLabel": "Icon",
+  "createProjectTitle": "Create project",
+  "createProjectAction": "Create",
+  "editProjectTitle": "Edit project",
+  "editProjectAction": "Edit",
+  "saveProjectAction": "Save",
+  "deleteProjectTitle": "Delete project",
+  "deleteProjectMessage": "Delete \"{name}\"? This cannot be undone.",
+  "@deleteProjectMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteProjectAction": "Delete",
+  "cancelAction": "Cancel",
+  "projectLoadError": "Unable to load projects",
+  "retryAction": "Retry",
+  "projectUpdatedLabel": "Updated {date}",
+  "@projectUpdatedLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -12,7 +12,7 @@ A clear, concise description of the bug.
 
 ## Environment
 
-- **Component:** (e.g. `services/backend`, `apps/frontend`, `infrastructure`)
+- **Component:** (e.g. `services/backend`, `apps/founder_studio`, `infrastructure`)
 - **Version / commit:** 
 - **Environment:** (local / staging / production)
 

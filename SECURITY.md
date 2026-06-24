@@ -13,7 +13,7 @@ See [CHANGELOG.md](CHANGELOG.md) and [docs/standards/versioning.md](docs/standar
 
 **Do not report security vulnerabilities through public GitHub issues.**
 
-Send reports to: **security@aione.example** <!-- TODO: Replace with production security contact -->
+For **v0.1.0-alpha**, report via [GitHub Security Advisories](https://github.com/aione/aione/security/advisories/new) on this repository (preferred) or email **security@aione.dev**.
 
 Include:
 

@@ -1,18 +1,21 @@
 # AIONE
 
-Enterprise monorepo foundation for the AIONE platform. This repository provides the structural scaffolding, local development tooling, and operational conventions required before application code is introduced.
+Enterprise monorepo for the AIONE platform — **v0.1.0-alpha**.
 
-> **Status:** Foundation phase — directory layout and infrastructure placeholders are in place. Application services are not yet implemented.
+> **Status:** Alpha freeze — Django backend, Founder Studio (Flutter) client, and local Docker runtime are implemented. Generator pipeline, knowledge graph artifacts, and production infrastructure are planned for later phases.
 
 ---
 
 ## Table of Contents
 
 - [Repository Structure](#repository-structure)
+- [Implemented Modules](#implemented-modules)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 - [Environment Configuration](#environment-configuration)
 - [Docker Compose](#docker-compose)
+- [Local Development (without Docker)](#local-development-without-docker)
+- [API Overview](#api-overview)
 - [Development Conventions](#development-conventions)
 - [Contributing](#contributing)
 
@@ -22,29 +25,52 @@ Enterprise monorepo foundation for the AIONE platform. This repository provides 
 
 ```
 AIONE/
-├── apps/              # Client-facing applications (web, mobile shells, etc.)
-├── docs/              # Architecture decisions, runbooks, and project documentation
-├── infrastructure/    # IaC, deployment manifests, and platform configuration
-├── packages/          # Shared libraries consumed across services and apps
-├── scripts/           # Automation, bootstrap, and maintenance scripts
-├── services/          # Backend services and APIs
-├── tests/             # Cross-cutting integration and end-to-end tests
-├── .editorconfig      # Editor formatting rules
-├── .env.example       # Environment variable template
-├── .gitignore         # VCS exclusion rules
-├── docker-compose.yml # Local development orchestration
-└── README.md          # This file
+├── apps/
+│   └── founder_studio/   # Flutter client (Founder Studio)
+├── services/
+│   └── backend/          # Django REST API
+├── docs/                 # ADRs and engineering standards
+├── planning/             # Roadmap, backlog, and release planning
+├── packages/             # Shared libraries (reserved)
+├── infrastructure/       # IaC and deployment manifests (reserved)
+├── scripts/              # Automation scripts (reserved)
+├── tests/                # Cross-cutting E2E tests (reserved)
+├── .editorconfig
+├── .env.example
+├── docker-compose.yml
+└── README.md
 ```
 
 | Directory         | Purpose                                                                 |
 | ----------------- | ----------------------------------------------------------------------- |
-| `apps/`           | User-facing applications deployed independently or as part of the stack |
-| `docs/`           | Living documentation, ADRs, and operational guides                      |
-| `infrastructure/` | Terraform, Kubernetes manifests, CI/CD pipelines, and cloud resources   |
-| `packages/`       | Reusable modules, SDKs, and shared configuration                        |
-| `scripts/`        | One-off and recurring automation tasks                                  |
-| `services/`       | Server-side services, workers, and background processors                |
-| `tests/`          | Repository-level test suites that span multiple components              |
+| `apps/founder_studio/` | Cross-platform Flutter client (web, mobile, desktop)             |
+| `services/backend/`    | Django REST API (auth, health, projects)                         |
+| `docs/`           | Architecture Decision Records (ADRs) and coding standards               |
+| `planning/`       | Roadmap, backlog, technical debt, and release planning                    |
+| `packages/`       | Reusable modules and SDKs (scaffold — not yet populated)                |
+| `infrastructure/` | Terraform, Kubernetes, CI/CD assets (scaffold — not yet populated)    |
+| `scripts/`        | Bootstrap and maintenance automation (scaffold — not yet populated)     |
+| `tests/`          | Repository-level integration and E2E tests (scaffold — not yet populated) |
+
+---
+
+## Implemented Modules
+
+### Backend (`services/backend`)
+
+- **Health** — `GET /api/health/` (public)
+- **Authentication** — JWT login, refresh, verify, logout, and `/api/auth/me/`
+- **Projects** — CRUD for founder venture projects (`/api/projects/`)
+- **API docs** — OpenAPI schema at `/api/schema/`, Swagger UI at `/api/docs/`
+
+### Founder Studio (`apps/founder_studio`)
+
+Flutter client using clean architecture (presentation → application → domain → infrastructure):
+
+- Email/password login with secure token storage and session restore
+- Project dashboard with create, view, edit, and delete
+- Backend connection status and version display
+- Light/dark/system theme and English/Arabic localization
 
 ---
 
@@ -53,8 +79,10 @@ AIONE/
 | Tool            | Minimum Version | Purpose                          |
 | --------------- | --------------- | -------------------------------- |
 | [Git](https://git-scm.com/)           | 2.30+           | Version control                  |
-| [Docker](https://www.docker.com/)     | 24+             | Container runtime                |
+| [Docker](https://www.docker.com/)     | 24+             | Container runtime (optional)     |
 | [Docker Compose](https://docs.docker.com/compose/) | v2.20+ | Local orchestration |
+| [Python](https://www.python.org/)     | 3.12+           | Backend development              |
+| [Flutter](https://docs.flutter.dev/)  | 3.11+           | Founder Studio development       |
 
 ---
 
@@ -63,7 +91,7 @@ AIONE/
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url> AIONE
+   git clone https://github.com/aione/aione.git AIONE
    cd AIONE
    ```
 
@@ -73,7 +101,7 @@ AIONE/
    cp .env.example .env
    ```
 
-   Edit `.env` and replace placeholder values (especially `APP_SECRET_KEY` and `POSTGRES_PASSWORD`).
+   Edit `.env` and set strong values for `APP_SECRET_KEY` and `POSTGRES_PASSWORD` before any shared or production use.
 
 3. **Start infrastructure services**
 
@@ -89,6 +117,8 @@ AIONE/
 
    Both `postgres` and `redis` should report a `healthy` status.
 
+5. **Run the application** — see [Local Development](#local-development-without-docker) or start the full Docker stack below.
+
 ---
 
 ## Environment Configuration
@@ -102,11 +132,13 @@ All runtime configuration is driven by environment variables. The canonical temp
 | `APP_DEBUG`         | `true`        | Enable verbose diagnostics (disable in production) |
 | `APP_SECRET_KEY`    | —             | Application signing/encryption secret    |
 | `BACKEND_PORT`      | `8000`        | Backend service host port                |
-| `FRONTEND_PORT`     | `3000`        | Frontend application host port           |
+| `FRONTEND_PORT`     | `3000`        | Founder Studio web host port             |
 | `POSTGRES_*`        | —             | PostgreSQL connection parameters         |
 | `REDIS_*`           | —             | Redis connection parameters              |
 | `DATABASE_URL`      | —             | Full PostgreSQL connection string        |
 | `REDIS_URL`         | —             | Full Redis connection string             |
+| `JWT_ACCESS_TOKEN_LIFETIME_MINUTES` | `30` | JWT access token lifetime |
+| `JWT_REFRESH_TOKEN_LIFETIME_DAYS`   | `7`  | JWT refresh token lifetime |
 
 > **Security:** Never commit `.env` files. Real secrets belong in a secrets manager for non-local environments.
 
@@ -116,29 +148,28 @@ All runtime configuration is driven by environment variables. The canonical temp
 
 The [`docker-compose.yml`](docker-compose.yml) file defines four services:
 
-| Service    | Image / Build Context      | Default Port | Profile | Status        |
+| Service    | Build Context              | Default Port | Profile | Status        |
 | ---------- | -------------------------- | ------------ | ------- | ------------- |
 | `postgres` | `postgres:16-alpine`       | 5432         | —       | Ready         |
 | `redis`    | `redis:7-alpine`           | 6379         | —       | Ready         |
-| `backend`  | `./services/backend`       | 8000         | `app`   | Placeholder   |
-| `frontend` | `./apps/frontend`          | 3000         | `app`   | Placeholder   |
+| `backend`  | `./services/backend`       | 8000         | `app`   | Ready         |
+| `frontend` | `./apps/founder_studio`    | 3000         | `app`   | Ready         |
 
-### Infrastructure only (available now)
+> The Compose service is named `frontend` for port/env consistency; the application source lives in `apps/founder_studio/`.
+
+### Infrastructure only
 
 ```bash
 docker compose up -d postgres redis
 ```
 
-### Full stack (requires Dockerfiles)
-
-Application services are gated behind the `app` profile until their respective Dockerfiles are added:
-
-- `services/backend/Dockerfile`
-- `apps/frontend/Dockerfile`
+### Full stack
 
 ```bash
 docker compose --profile app up -d
 ```
+
+This builds and starts the Django backend and Founder Studio web client. The backend healthcheck calls `GET /api/health/`.
 
 ### Common commands
 
@@ -155,22 +186,73 @@ docker compose down -v
 
 ---
 
+## Local Development (without Docker)
+
+### Backend
+
+```bash
+cd services/backend
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+API documentation: http://localhost:8000/api/docs/
+
+### Founder Studio
+
+```bash
+cd apps/founder_studio
+flutter pub get
+flutter run -d chrome --dart-define=BACKEND_URL=http://localhost:8000
+```
+
+### Tests
+
+```bash
+# Backend
+cd services/backend && python manage.py test
+
+# Founder Studio
+cd apps/founder_studio && flutter analyze && flutter test
+```
+
+---
+
+## API Overview
+
+| Method | Endpoint              | Auth    | Description              |
+| ------ | --------------------- | ------- | ------------------------ |
+| GET    | `/api/health/`        | Public  | Service health and version |
+| POST   | `/api/auth/login/`    | Public  | Obtain JWT token pair    |
+| POST   | `/api/auth/refresh/`  | Public  | Refresh access token     |
+| POST   | `/api/auth/verify/`   | Public  | Verify token validity    |
+| POST   | `/api/auth/logout/`   | JWT     | Blacklist refresh token  |
+| GET    | `/api/auth/me/`       | JWT     | Current user profile     |
+| GET    | `/api/projects/`      | JWT     | List projects            |
+| POST   | `/api/projects/`      | JWT     | Create project           |
+| GET    | `/api/projects/{id}/` | JWT     | Retrieve project         |
+| PUT/PATCH | `/api/projects/{id}/` | JWT  | Update project           |
+| DELETE | `/api/projects/{id}/` | JWT     | Delete project           |
+
+User accounts are created via Django admin or migrations in alpha; there is no public registration endpoint.
+
+---
+
 ## Development Conventions
 
 - **Line endings:** LF (enforced via [`.editorconfig`](.editorconfig))
 - **Indentation:** 2 spaces (4 for Python)
 - **Secrets:** Use `.env` locally; never commit credentials
 - **Overrides:** Use `docker-compose.override.yml` for personal local tweaks (git-ignored)
-- **Branching:** Follow your team's Git workflow; feature branches off `main` recommended
+- **Branching:** See [docs/standards/branch_strategy.md](docs/standards/branch_strategy.md)
+- **Architecture:** See [docs/adr/README.md](docs/adr/README.md)
 
 ---
 
 ## Contributing
 
-1. Create a feature branch from `main`.
-2. Make changes within the appropriate top-level directory.
-3. Ensure `.editorconfig` rules are respected.
-4. Open a pull request with a clear description of intent and scope.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for workflow, standards, and pull request requirements.
 
 ---
 
