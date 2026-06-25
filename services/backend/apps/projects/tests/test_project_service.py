@@ -5,7 +5,10 @@ from django.test import TestCase
 
 from apps.projects.models import ProjectStatus
 from apps.projects.services import project_service
-from apps.projects.services.project_service import ProjectNotFoundError, ProjectValidationError
+from apps.projects.services.project_service import (
+    ProjectNotFoundError,
+    ProjectValidationError,
+)
 
 User = get_user_model()
 
