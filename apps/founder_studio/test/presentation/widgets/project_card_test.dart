@@ -28,11 +28,7 @@ void main() {
   }
 
   testWidgets('ProjectCard displays name and description', (tester) async {
-    await tester.pumpWidget(
-      wrap(
-        ProjectCard(project: project, onTap: () {}),
-      ),
-    );
+    await tester.pumpWidget(wrap(ProjectCard(project: project, onTap: () {})));
     await tester.pumpAndSettle();
 
     expect(find.text('Venture Alpha'), findsOneWidget);
@@ -43,9 +39,7 @@ void main() {
   testWidgets('ProjectCard triggers onTap', (tester) async {
     var tapped = false;
     await tester.pumpWidget(
-      wrap(
-        ProjectCard(project: project, onTap: () => tapped = true),
-      ),
+      wrap(ProjectCard(project: project, onTap: () => tapped = true)),
     );
     await tester.pumpAndSettle();
 

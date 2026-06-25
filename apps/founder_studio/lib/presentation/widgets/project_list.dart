@@ -101,9 +101,8 @@ class ProjectList extends ConsumerWidget {
                       final project = page.results[index];
                       return ProjectCard(
                         project: project,
-                        onTap: () => context.push(
-                          AppRoutes.projectDetail(project.id),
-                        ),
+                        onTap: () =>
+                            context.push(AppRoutes.projectDetail(project.id)),
                       );
                     },
                   );

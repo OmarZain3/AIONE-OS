@@ -29,9 +29,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> restoreSession() async {
     state = const AuthLoading();
     try {
-      final user = await _repository
-          .restoreSession()
-          .timeout(_sessionRestoreTimeout);
+      final user = await _repository.restoreSession().timeout(
+        _sessionRestoreTimeout,
+      );
       state = user != null
           ? AuthAuthenticated(user)
           : const AuthUnauthenticated();

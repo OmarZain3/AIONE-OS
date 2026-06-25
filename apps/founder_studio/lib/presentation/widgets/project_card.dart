@@ -37,7 +37,10 @@ class ProjectCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  _StatusChip(status: project.status, label: _statusLabel(l10n, project.status)),
+                  _StatusChip(
+                    status: project.status,
+                    label: _statusLabel(l10n, project.status),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),

@@ -45,10 +45,7 @@ class ProjectListFilter {
   final ProjectStatus? status;
 
   ProjectListFilter copyWith({String? search, ProjectStatus? status}) {
-    return ProjectListFilter(
-      search: search ?? this.search,
-      status: status,
-    );
+    return ProjectListFilter(search: search ?? this.search, status: status);
   }
 }
 
@@ -69,13 +66,11 @@ final projectListProvider = FutureProvider.autoDispose<PaginatedProjects>((
   );
 });
 
-final projectDetailProvider = FutureProvider.autoDispose.family<Project, String>((
-  ref,
-  id,
-) async {
-  final useCase = ref.watch(getProjectUseCaseProvider);
-  return useCase(id);
-});
+final projectDetailProvider = FutureProvider.autoDispose
+    .family<Project, String>((ref, id) async {
+      final useCase = ref.watch(getProjectUseCaseProvider);
+      return useCase(id);
+    });
 
 /// Orchestrates project mutations and list refresh.
 class ProjectActions {

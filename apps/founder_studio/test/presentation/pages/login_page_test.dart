@@ -71,7 +71,9 @@ void main() {
     expect(find.byType(TextFormField), findsNWidgets(2));
   });
 
-  testWidgets('LoginPage shows error message on failed sign in', (tester) async {
+  testWidgets('LoginPage shows error message on failed sign in', (
+    tester,
+  ) async {
     final repository = _FakeAuthRepository()..shouldFail = true;
     await tester.pumpWidget(wrap(const LoginPage(), repository));
     await tester.pumpAndSettle();

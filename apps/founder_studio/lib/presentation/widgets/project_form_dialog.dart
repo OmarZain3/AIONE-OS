@@ -132,7 +132,9 @@ class ProjectFormState extends State<ProjectForm> {
           const SizedBox(height: 12),
           TextFormField(
             controller: _descriptionController,
-            decoration: InputDecoration(labelText: l10n.projectDescriptionLabel),
+            decoration: InputDecoration(
+              labelText: l10n.projectDescriptionLabel,
+            ),
             maxLines: 3,
           ),
           const SizedBox(height: 12),
@@ -156,7 +158,10 @@ class ProjectFormState extends State<ProjectForm> {
                   },
           ),
           const SizedBox(height: 12),
-          Text(l10n.projectColorLabel, style: Theme.of(context).textTheme.labelLarge),
+          Text(
+            l10n.projectColorLabel,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
