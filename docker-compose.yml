@@ -1,130 +1,130 @@
-# =============================================================================
-# AIONE — Docker Compose (Development)
-# =============================================================================
-# Usage:
-#   cp .env.example .env
-#   docker compose up -d postgres redis          # infrastructure only
-#   docker compose --profile app up -d           # full stack
-# =============================================================================
-
-name: ${COMPOSE_PROJECT_NAME:-aione}
-
-services:
-  backend:
-    build:
-      context: ./services/backend
-      dockerfile: Dockerfile
-    container_name: ${COMPOSE_PROJECT_NAME:-aione}-backend
-    restart: unless-stopped
-    ports:
-      - "${BACKEND_PORT:-8000}:${BACKEND_PORT:-8000}"
-    environment:
-      APP_ENV: ${APP_ENV:-development}
-      DEBUG: ${APP_DEBUG:-true}
-      APP_SECRET_KEY: ${APP_SECRET_KEY:-change-me}
-      BACKEND_HOST: ${BACKEND_HOST:-0.0.0.0}
-      BACKEND_PORT: ${BACKEND_PORT:-8000}
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
-      ALLOWED_HOSTS: localhost,127.0.0.1,backend,0.0.0.0
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT:-8000}/api/health/"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
-    networks:
-      - aione
-    profiles:
-      - app
-
-  frontend:
-    build:
-      context: ./apps/founder_studio
-      dockerfile: Dockerfile
-      args:
-        BACKEND_URL: http://backend:${BACKEND_PORT:-8000}
-    container_name: ${COMPOSE_PROJECT_NAME:-aione}-frontend
-    restart: unless-stopped
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
-    environment:
-      APP_ENV: ${APP_ENV:-development}
-    depends_on:
-      backend:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - aione
-    profiles:
-      - app
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: ${COMPOSE_PROJECT_NAME:-aione}-postgres
-    restart: unless-stopped
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-aione}
-      POSTGRES_USER: ${POSTGRES_USER:-aione}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aione} -d ${POSTGRES_DB:-aione}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - aione
-
-  redis:
-    image: redis:7-alpine
-    container_name: ${COMPOSE_PROJECT_NAME:-aione}-redis
-    restart: unless-stopped
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    command: >
-      sh -c '
-        if [ -n "$${REDIS_PASSWORD}" ]; then
-          redis-server --requirepass "$${REDIS_PASSWORD}"
-        else
-          redis-server
-        fi
-      '
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - aione
-
-networks:
-  aione:
-    driver: bridge
-    name: ${COMPOSE_PROJECT_NAME:-aione}-network
-
-volumes:
-  postgres_data:
-    name: ${COMPOSE_PROJECT_NAME:-aione}-postgres-data
-  redis_data:
-    name: ${COMPOSE_PROJECT_NAME:-aione}-redis-data
-
+---
+# =============================================================================
+# AIONE — Docker Compose (Development)
+# =============================================================================
+# Usage:
+#   cp .env.example .env
+#   docker compose up -d postgres redis          # infrastructure only
+#   docker compose --profile app up -d           # full stack
+# =============================================================================
+
+name: ${COMPOSE_PROJECT_NAME:-aione}
+
+services:
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-aione}-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:${BACKEND_PORT:-8000}"
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DEBUG: ${APP_DEBUG:-true}
+      APP_SECRET_KEY: ${APP_SECRET_KEY:-change-me}
+      BACKEND_HOST: ${BACKEND_HOST:-0.0.0.0}
+      BACKEND_PORT: ${BACKEND_PORT:-8000}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend,0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT:-8000}/api/health/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - aione
+    profiles:
+      - app
+
+  frontend:
+    build:
+      context: ./apps/founder_studio
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: http://backend:${BACKEND_PORT:-8000}
+    container_name: ${COMPOSE_PROJECT_NAME:-aione}-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - aione
+    profiles:
+      - app
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-aione}-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aione}
+      POSTGRES_USER: ${POSTGRES_USER:-aione}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aione} -d ${POSTGRES_DB:-aione}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - aione
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-aione}-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      sh -c '
+        if [ -n "$${REDIS_PASSWORD}" ]; then
+          redis-server --requirepass "$${REDIS_PASSWORD}"
+        else
+          redis-server
+        fi
+      '
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - aione
+
+networks:
+  aione:
+    driver: bridge
+    name: ${COMPOSE_PROJECT_NAME:-aione}-network
+
+volumes:
+  postgres_data:
+    name: ${COMPOSE_PROJECT_NAME:-aione}-postgres-data
+  redis_data:
+    name: ${COMPOSE_PROJECT_NAME:-aione}-redis-data

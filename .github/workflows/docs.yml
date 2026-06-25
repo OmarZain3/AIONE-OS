@@ -1,6 +1,7 @@
+---
 name: Documentation
 
-on:
+'on':
   workflow_call:
   workflow_dispatch:
 
@@ -91,6 +92,7 @@ jobs:
 
       - name: Lint YAML files
         run: |
-          yamllint -d "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}" \
+          yamllint \
+            -d "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}" \
             .github/ docker-compose.yml pre-commit-config.yaml 2>/dev/null || \
           yamllint .github/ docker-compose.yml pre-commit-config.yaml
