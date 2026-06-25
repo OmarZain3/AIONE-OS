@@ -21,10 +21,19 @@ jobs:
       - name: Build project matrix
         id: set-matrix
         run: |
-          PROJECTS=$(find services packages -name manage.py -not -path "*/.*" 2>/dev/null \
-            | xargs -I{} dirname {} \
-            | sort -u \
-            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          SEARCH_DIRS=()
+          for dir in services packages; do
+            [ -d "$dir" ] && SEARCH_DIRS+=("$dir")
+          done
+
+          if [ ${#SEARCH_DIRS[@]} -eq 0 ]; then
+            PROJECTS="[]"
+          else
+            PROJECTS=$(find "${SEARCH_DIRS[@]}" -name manage.py -not -path "*/.*" 2>/dev/null \
+              | xargs -I{} dirname {} \
+              | sort -u \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          fi
 
           if [ "$PROJECTS" = "[]" ] || [ -z "$PROJECTS" ]; then
             echo "has_projects=false" >> "$GITHUB_OUTPUT"
@@ -53,16 +62,30 @@ jobs:
 
       - name: Ruff check
         run: |
-          if find services packages -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
-            ruff check services packages
+          LINT_DIRS=()
+          for dir in services packages tests scripts; do
+            [ -d "$dir" ] && LINT_DIRS+=("$dir")
+          done
+
+          if [ ${#LINT_DIRS[@]} -eq 0 ]; then
+            echo "No Python source directories found — skipping Ruff"
+          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+            ruff check "${LINT_DIRS[@]}"
           else
             echo "No Python files found — skipping Ruff"
           fi
 
       - name: Ruff format check
         run: |
-          if find services packages -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
-            ruff format --check services packages
+          LINT_DIRS=()
+          for dir in services packages tests scripts; do
+            [ -d "$dir" ] && LINT_DIRS+=("$dir")
+          done
+
+          if [ ${#LINT_DIRS[@]} -eq 0 ]; then
+            echo "No Python source directories found — skipping format check"
+          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+            ruff format --check "${LINT_DIRS[@]}"
           else
             echo "No Python files found — skipping format check"
           fi
