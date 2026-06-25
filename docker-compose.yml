@@ -34,7 +34,11 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT:-8000}/api/health/"]
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:${BACKEND_PORT:-8000}/api/health/
       interval: 30s
       timeout: 5s
       retries: 3
@@ -83,7 +87,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aione} -d ${POSTGRES_DB:-aione}"]
+      test:
+        - CMD-SHELL
+        - >-
+          pg_isready -U ${POSTGRES_USER:-aione}
+          -d ${POSTGRES_DB:-aione}
       interval: 10s
       timeout: 5s
       retries: 5

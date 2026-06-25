@@ -1,3 +1,4 @@
+---
 # AIONE pre-commit configuration
 # Install: pre-commit install && pre-commit install --hook-type commit-msg
 # Run all:  pre-commit run --all-files
@@ -39,7 +40,11 @@ repos:
     rev: v1.35.1
     hooks:
       - id: yamllint
-        args: [-d, "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}"]
+        args:
+          - -d
+          - >-
+            {extends: default, rules: {line-length: {max: 120,
+            allow-non-breakable-inline-mappings: true}}}
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4
@@ -60,28 +65,110 @@ repos:
     hooks:
       - id: adr-required-sections
         name: ADR required sections
-        entry: bash -c 'ADR_DIR=docs/adr; REQUIRED="Status|Context|Decision|Alternatives|Consequences|Future Review"; FAILED=0; for f in "$ADR_DIR"/[0-9]*.md; do [ -f "$f" ] || continue; for s in $REQUIRED; do grep -q "^## $s" "$f" || { echo "Missing ## $s in $f"; FAILED=1; }; done; done; exit $FAILED'
+        entry: bash
         language: system
         pass_filenames: false
         files: ^docs/adr/[0-9].*\.md$
+        args:
+          - -c
+          - |
+            ADR_DIR=docs/adr
+            REQUIRED="Status|Context|Decision|Alternatives|"
+            REQUIRED="${REQUIRED}Consequences|Future Review"
+            FAILED=0
+            for f in "$ADR_DIR"/[0-9]*.md; do
+              [ -f "$f" ] || continue
+              for s in $REQUIRED; do
+                grep -q "^## $s" "$f" || {
+                  echo "Missing ## $s in $f"
+                  FAILED=1
+                }
+              done
+            done
+            exit $FAILED
 
       - id: flutter-format
         name: Flutter format check
-        entry: bash -c 'command -v flutter >/dev/null 2>&1 || { echo "Flutter not installed — skipping"; exit 0; }; FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && dart format --output=none --set-exit-if-changed .) || FAILED=1; done < <(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); exit $FAILED'
+        entry: bash
         language: system
         pass_filenames: false
         files: \.dart$
+        args:
+          - -c
+          - |
+            command -v flutter >/dev/null 2>&1 || {
+              echo "Flutter not installed — skipping"
+              exit 0
+            }
+            FAILED=0
+            while IFS= read -r dir; do
+              [ -z "$dir" ] && continue
+              (
+                cd "$dir" &&
+                dart format --output=none --set-exit-if-changed .
+              ) || FAILED=1
+            done < <(
+              find apps packages -name pubspec.yaml -not -path "*/.*" \
+                2>/dev/null |
+              xargs -I{} dirname {} |
+              sort -u
+            )
+            exit $FAILED
 
       - id: flutter-analyze
         name: Flutter analyze
-        entry: bash -c 'command -v flutter >/dev/null 2>&1 || { echo "Flutter not installed — skipping"; exit 0; }; FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && flutter pub get >/dev/null && flutter analyze --fatal-infos --fatal-warnings) || FAILED=1; done < <(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); exit $FAILED'
+        entry: bash
         language: system
         pass_filenames: false
         files: \.(dart|yaml)$
+        args:
+          - -c
+          - |
+            command -v flutter >/dev/null 2>&1 || {
+              echo "Flutter not installed — skipping"
+              exit 0
+            }
+            FAILED=0
+            while IFS= read -r dir; do
+              [ -z "$dir" ] && continue
+              (
+                cd "$dir" &&
+                flutter pub get >/dev/null &&
+                flutter analyze --fatal-infos --fatal-warnings
+              ) || FAILED=1
+            done < <(
+              find apps packages -name pubspec.yaml -not -path "*/.*" \
+                2>/dev/null |
+              xargs -I{} dirname {} |
+              sort -u
+            )
+            exit $FAILED
 
       - id: django-check
         name: Django system check
-        entry: bash -c 'FAILED=0; while IFS= read -r dir; do [ -z "$dir" ] && continue; (cd "$dir" && SECRET_KEY=pre-commit DEBUG=false DATABASE_URL=sqlite:///tmp/precommit.sqlite3 python manage.py check) || FAILED=1; done < <(find services packages -name manage.py -not -path "*/.*" 2>/dev/null | xargs -I{} dirname {} | sort -u); [ $FAILED -eq 0 ] || exit 1; echo "No Django projects or all checks passed"'
+        entry: bash
         language: system
         pass_filenames: false
         files: ^(services|packages)/.*\.py$
+        args:
+          - -c
+          - |
+            FAILED=0
+            while IFS= read -r dir; do
+              [ -z "$dir" ] && continue
+              (
+                cd "$dir" &&
+                SECRET_KEY=pre-commit DEBUG=false \
+                  DATABASE_URL=sqlite:///tmp/precommit.sqlite3 \
+                  python manage.py check
+              ) || FAILED=1
+            done < <(
+              find services packages -name manage.py -not -path "*/.*" \
+                2>/dev/null |
+              xargs -I{} dirname {} |
+              sort -u
+            )
+            if [ $FAILED -eq 0 ]; then
+              echo "No Django projects or all checks passed"
+            fi
+            exit $FAILED

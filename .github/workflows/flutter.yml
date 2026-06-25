@@ -22,10 +22,13 @@ jobs:
       - name: Build project matrix
         id: set-matrix
         run: |
-          PROJECTS=$(find apps packages -name pubspec.yaml -not -path "*/.*" 2>/dev/null \
-            | xargs -I{} dirname {} \
-            | sort -u \
-            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          PROJECTS=$(
+            find apps packages -name pubspec.yaml -not -path "*/.*" \
+              2>/dev/null \
+              | xargs -I{} dirname {} \
+              | sort -u \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))'
+          )
 
           if [ "$PROJECTS" = "[]" ] || [ -z "$PROJECTS" ]; then
             echo "has_projects=false" >> "$GITHUB_OUTPUT"
@@ -86,4 +89,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Skip Flutter validation
-        run: echo "No pubspec.yaml found under apps/ or packages/ — Flutter CI skipped"
+        run: >-
+          echo "No pubspec.yaml found under apps/ or packages/
+          — Flutter CI skipped"

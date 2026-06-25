@@ -92,7 +92,8 @@ jobs:
 
       - name: Lint YAML files
         run: |
-          yamllint \
-            -d "{extends: default, rules: {line-length: {max: 120, allow-non-breakable-inline-mappings: true}}}" \
+          CONFIG="{extends: default, rules: {line-length: {max: 120, "
+          CONFIG="${CONFIG}allow-non-breakable-inline-mappings: true}}}"
+          yamllint -d "$CONFIG" \
             .github/ docker-compose.yml pre-commit-config.yaml 2>/dev/null || \
           yamllint .github/ docker-compose.yml pre-commit-config.yaml

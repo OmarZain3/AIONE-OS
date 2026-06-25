@@ -30,10 +30,13 @@ jobs:
           if [ ${#SEARCH_DIRS[@]} -eq 0 ]; then
             PROJECTS="[]"
           else
-            PROJECTS=$(find "${SEARCH_DIRS[@]}" -name manage.py -not -path "*/.*" 2>/dev/null \
-              | xargs -I{} dirname {} \
-              | sort -u \
-              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            PROJECTS=$(
+              find "${SEARCH_DIRS[@]}" -name manage.py -not -path "*/.*" \
+                2>/dev/null \
+                | xargs -I{} dirname {} \
+                | sort -u \
+                | jq -R -s -c 'split("\n") | map(select(length > 0))'
+            )
           fi
 
           if [ "$PROJECTS" = "[]" ] || [ -z "$PROJECTS" ]; then
@@ -70,7 +73,8 @@ jobs:
 
           if [ ${#LINT_DIRS[@]} -eq 0 ]; then
             echo "No Python source directories found — skipping Ruff"
-          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" \
+            2>/dev/null | grep -q .; then
             ruff check "${LINT_DIRS[@]}"
           else
             echo "No Python files found — skipping Ruff"
@@ -85,7 +89,8 @@ jobs:
 
           if [ ${#LINT_DIRS[@]} -eq 0 ]; then
             echo "No Python source directories found — skipping format check"
-          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" 2>/dev/null | grep -q .; then
+          elif find "${LINT_DIRS[@]}" -name "*.py" -not -path "*/.*" \
+            2>/dev/null | grep -q .; then
             ruff format --check "${LINT_DIRS[@]}"
           else
             echo "No Python files found — skipping format check"
@@ -127,7 +132,8 @@ jobs:
       - name: Django system check
         working-directory: ${{ matrix.project }}
         env:
-          DJANGO_SETTINGS_MODULE: ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
+          DJANGO_SETTINGS_MODULE: >-
+            ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
           SECRET_KEY: ci-only-not-for-production
           DEBUG: "false"
           DATABASE_URL: sqlite:///tmp/ci.sqlite3
@@ -136,12 +142,14 @@ jobs:
       - name: Run tests
         working-directory: ${{ matrix.project }}
         env:
-          DJANGO_SETTINGS_MODULE: ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
+          DJANGO_SETTINGS_MODULE: >-
+            ${{ vars.DJANGO_SETTINGS_MODULE || 'config.settings' }}
           SECRET_KEY: ci-only-not-for-production
           DEBUG: "false"
           DATABASE_URL: sqlite:///tmp/ci.sqlite3
         run: |
-          if [ -d tests ] || find . -path "*/test_*.py" -o -path "*/tests.py" 2>/dev/null | grep -q .; then
+          if [ -d tests ] || find . -path "*/test_*.py" -o -path "*/tests.py" \
+            2>/dev/null | grep -q .; then
             python manage.py test --verbosity 1
           else
             echo "No tests found — skipping"
@@ -154,4 +162,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Skip Django validation
-        run: echo "No manage.py found under services/ or packages/ — Django CI skipped"
+        run: >-
+          echo "No manage.py found under services/ or packages/
+          — Django CI skipped"
