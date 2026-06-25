@@ -6,9 +6,14 @@
 
 ## Context
 
-AIONE requires cross-platform client applications. Flutter provides a single codebase for mobile and desktop targets with strong widget tooling and test support. The monorepo places client apps under `apps/` per [ADR 0001](0001-repository-strategy.md).
+AIONE requires cross-platform client applications. Flutter provides a single
+codebase for mobile and desktop targets with strong widget tooling and test
+support. The monorepo places client apps under `apps/` per [ADR
+0001](0001-repository-strategy.md).
 
-We need an architectural baseline before application code is introduced — covering project placement, layering, dependency rules, and CI integration — without prescribing business features.
+We need an architectural baseline before application code is introduced —
+covering project placement, layering, dependency rules, and CI integration —
+without prescribing business features.
 
 ## Decision
 
@@ -22,17 +27,19 @@ We need an architectural baseline before application code is introduced — cove
 
 Each app follows **clean architecture** with unidirectional dependencies:
 
-```
+```text
 presentation/   → UI, widgets, state management
 application/    → use cases, orchestration
 domain/         → entities, repository interfaces (no Flutter imports)
 infrastructure/ → API clients, local storage, platform adapters
 ```
 
-**Rules:**
+### Rules
 
-1. `domain/` must not import from `presentation/`, `application/`, or `infrastructure/`.
-2. `presentation/` must not import from `infrastructure/` directly — go through `application/`.
+1. `domain/` must not import from `presentation/`, `application/`, or
+  `infrastructure/`.
+2. `presentation/` must not import from `infrastructure/` directly — go through
+  `application/`.
 3. Shared code used by 2+ apps belongs in `packages/`, not duplicated.
 
 ### State Management
@@ -42,27 +49,28 @@ infrastructure/ → API clients, local storage, platform adapters
 
 ### Testing Strategy
 
-| Layer          | Test Type        |
+| Layer | Test Type |
 | -------------- | ---------------- |
-| `domain/`      | Unit tests       |
-| `application/` | Unit tests       |
-| `presentation/`| Widget tests     |
-| Full flows     | Integration tests in `integration_test/` |
+| `domain/` | Unit tests |
+| `application/` | Unit tests |
+| `presentation/` | Widget tests |
+| Full flows | Integration tests in `integration_test/` |
 
 ### CI Integration
 
 - Discovered via `pubspec.yaml` under `apps/` and `packages/`.
-- Pipeline: `dart format` → `flutter analyze` → `flutter test` (`.github/workflows/flutter.yml`).
+- Pipeline: `dart format` → `flutter analyze` → `flutter test`
+  (`.github/workflows/flutter.yml`).
 - Local parity via `make flutter-analyze` and pre-commit hooks.
 
 ## Alternatives
 
-| Alternative           | Why Not Chosen                                           |
-| --------------------- | -------------------------------------------------------- |
-| React Native / web-only | Flutter chosen for unified UI across mobile + desktop  |
-| BLoC only             | Riverpod offers simpler DI with comparable testability   |
-| Feature-first folders | Layer-first enforces dependency boundaries more strictly |
-| Separate Flutter repo | Conflicts with monorepo strategy (ADR 0001)              |
+| Alternative | Why Not Chosen |
+| --- | --- |
+| React Native | Flutter cross-platform UI |
+| BLoC only | Riverpod offers simpler DI with comparable testability |
+| Feature-first folders | Layer-first enforces dependency boundaries |
+| Separate Flutter repo | Conflicts with monorepo strategy (ADR 0001) |
 
 ## Consequences
 
@@ -80,7 +88,8 @@ infrastructure/ → API clients, local storage, platform adapters
 
 ### Neutral
 
-- Code generation (see [ADR 0004](0004-generator-driven-development.md)) will integrate at the `domain/` and `infrastructure/` boundaries.
+- Code generation (see [ADR 0004](0004-generator-driven-development.md)) will
+  integrate at the `domain/` and `infrastructure/` boundaries.
 - Web-specific concerns may require a dedicated `apps/web/` variant later.
 
 ## Future Review

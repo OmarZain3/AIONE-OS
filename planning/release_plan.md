@@ -1,6 +1,7 @@
 # Release Plan
 
-Release strategy for AIONE per [versioning](../docs/standards/versioning.md) and [branch strategy](../docs/standards/branch_strategy.md).
+Release strategy for AIONE per [versioning](../docs/standards/versioning.md) and
+[branch strategy](../docs/standards/branch_strategy.md).
 
 **Current version:** `v0.1.0-alpha` · **Next target:** `v0.2.0-beta`
 
@@ -9,9 +10,9 @@ Release strategy for AIONE per [versioning](../docs/standards/versioning.md) and
 | Release | Branch | Base | Tag | Theme |
 | ------- | ------ | ---- | --- | ----- |
 | `v0.1.0-alpha` | `main` | — | `v0.1.0-alpha` | Foundation ✓ |
-| `v0.2.0-beta` | `release/v0.2.0` | `develop` | `v0.2.0-beta` | Integrated scaffold |
-| `v0.3.0-alpha` | `release/v0.3.0` | `develop` | `v0.3.0-alpha` | Generator pipeline |
-| `v0.3.0-beta` | `release/v0.3.0` | `develop` | `v0.3.0-beta` | Graph + packages |
+| `v0.2.0-beta` | `release/v0.2.0` | `develop` | `v0.2.0-beta` | Scaffold |
+| `v0.3.0-alpha` | `release/v0.3.0` | `develop` | `v0.3.0-alpha` | Generators |
+| `v0.3.0-beta` | `release/v0.3.0` | `develop` | `v0.3.0-beta` | Graph + pkgs |
 | `v0.4.0-beta` | `release/v0.4.0` | `develop` | `v0.4.0-beta` | Product beta |
 
 Pre-1.0: breaking changes permitted in `MINOR` per versioning standard.
@@ -59,7 +60,7 @@ Pre-1.0: breaking changes permitted in `MINOR` per versioning standard.
 
 **Target:** 2026-08 · **Phase:** 2
 
-### Scope (in)
+### Scope (in) — v0.3.0-alpha
 
 - `definitions/`, `scripts/generators/`, `make generate`
 - CI drift check

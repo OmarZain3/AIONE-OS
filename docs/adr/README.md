@@ -1,6 +1,7 @@
 # Architecture Decision Records (ADRs)
 
-ADRs capture significant architectural and technical decisions along with their context and consequences.
+ADRs capture significant architectural and technical decisions along with their
+context and consequences.
 
 ## When to Write an ADR
 
@@ -11,13 +12,15 @@ Create an ADR when a decision:
 - Introduces a new technology, pattern, or integration
 - Has security, compliance, or operational impact
 
-Skip ADRs for routine implementation choices already covered by existing standards.
+Skip ADRs for routine implementation choices already covered by existing
+standards.
 
 ## Format
 
-Use the template below. File naming: `NNNN-short-title.md` (zero-padded sequence, kebab-case title).
+Use the template below. File naming: `NNNN-short-title.md` (zero-padded
+sequence, kebab-case title).
 
-```
+```text
 docs/adr/
 ├── README.md
 ├── 0001-repository-strategy.md

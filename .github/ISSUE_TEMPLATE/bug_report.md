@@ -12,7 +12,8 @@ A clear, concise description of the bug.
 
 ## Environment
 
-- **Component:** (e.g. `services/backend`, `apps/founder_studio`, `infrastructure`)
+- **Component:** (e.g. `services/backend`, `apps/founder_studio`,
+  `infrastructure`)
 - **Version / commit:** 
 - **Environment:** (local / staging / production)
 
@@ -32,7 +33,7 @@ What actually happened.
 
 ## Logs / Screenshots
 
-```
+```text
 Paste relevant logs or attach screenshots.
 ```
 

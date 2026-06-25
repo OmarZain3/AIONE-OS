@@ -6,9 +6,14 @@
 
 ## Context
 
-AIONE backend services require a mature, batteries-included Python framework with strong ORM, admin, and ecosystem support. Django is the chosen stack for services under `services/` per the monorepo layout defined in [ADR 0001](0001-repository-strategy.md).
+AIONE backend services require a mature, batteries-included Python framework
+with strong ORM, admin, and ecosystem support. Django is the chosen stack for
+services under `services/` per the monorepo layout defined in [ADR
+0001](0001-repository-strategy.md).
 
-An architectural baseline is needed before service code is introduced — covering project structure, layering, settings management, and CI — without defining business domains or API endpoints.
+An architectural baseline is needed before service code is introduced — covering
+project structure, layering, settings management, and CI — without defining
+business domains or API endpoints.
 
 ## Decision
 
@@ -20,7 +25,7 @@ An architectural baseline is needed before service code is introduced — coveri
 
 ### Layered Architecture
 
-```
+```text
 config/           → settings, URLs, WSGI/ASGI (project shell)
 apps/<domain>/    → Django apps per bounded context
   models.py       → data models (persistence layer)
@@ -29,40 +34,46 @@ apps/<domain>/    → Django apps per bounded context
   api/            → serializers, views, routers (transport layer)
 ```
 
-**Rules:**
+### Rules
 
 1. Business logic resides in `services/`, not in views or serializers.
 2. Views are thin — validate input, call service, return response.
-3. Cross-service communication uses explicit contracts (HTTP/events), not shared database tables.
-4. Settings split: `config/settings/base.py`, `development.py`, `production.py`, `test.py`.
+3. Cross-service communication uses explicit contracts (HTTP/events), not shared
+  database tables.
+4. Settings split: `config/settings/base.py`, `development.py`, `production.py`,
+  `test.py`.
 
 ### API Style
 
-- Default transport: **Django REST Framework** (DRF) when HTTP APIs are introduced.
-- OpenAPI schema generation via `drf-spectacular` (configured during service scaffold sprint).
+- Default transport: **Django REST Framework** (DRF) when HTTP APIs are
+  introduced.
+- OpenAPI schema generation via `drf-spectacular` (configured during service
+  scaffold sprint).
 - No API endpoints are defined in this ADR — only structural intent.
 
 ### Data & Infrastructure
 
 - PostgreSQL as primary datastore (via Docker Compose locally).
 - Redis for caching and ephemeral data (via Docker Compose locally).
-- Environment-driven configuration — no secrets in code (`.env.example` template).
+- Environment-driven configuration — no secrets in code (`.env.example`
+  template).
 
 ### CI Integration
 
 - Discovered via `manage.py` under `services/` and `packages/`.
-- Pipeline: Ruff lint/format → `manage.py check` → `manage.py test` (`.github/workflows/django.yml`).
+- Pipeline: Ruff lint/format → `manage.py check` → `manage.py test`
+  (`.github/workflows/django.yml`).
 - Local parity via `make django-check` and pre-commit hooks.
 
 ## Alternatives
 
-| Alternative              | Why Not Chosen                                        |
-| ------------------------ | ----------------------------------------------------- |
-| FastAPI-only services    | Django ORM, admin, and auth ecosystem fit enterprise needs |
-| Microservice per repo    | Conflicts with monorepo strategy (ADR 0001)           |
-| Fat models / fat views   | Harder to test; violates separation of concerns       |
-| GraphQL default          | REST + OpenAPI sufficient for initial platform phase  |
-| Shared database across services | Violates service boundary isolation             |
+| Alternative | Why Not Chosen |
+| --- | --- |
+| FastAPI-only services | Django ORM, admin, auth fit enterprise needs |
+| Microservice per repo | Conflicts with monorepo strategy (ADR 0001) |
+| Fat models / fat views | Harder to test; violates separation of concerns |
+| GraphQL default | REST + OpenAPI sufficient for initial platform phase |
+| Shared database across services | Violates service boundary isolation |
 
 ## Consequences
 
@@ -81,7 +92,8 @@ apps/<domain>/    → Django apps per bounded context
 
 ### Neutral
 
-- Async views (Django 5+) available but not mandated until performance profiling warrants.
+- Async views (Django 5+) available but not mandated until performance profiling
+  warrants.
 - Event-driven patterns (Celery, outbox) deferred to a future ADR.
 
 ## Future Review

@@ -1,6 +1,7 @@
 # Code Review Checklist
 
-Use this checklist for every pull request — reviewers and authors share responsibility.
+Use this checklist for every pull request — reviewers and authors share
+responsibility.
 
 ## Author (Before Requesting Review)
 
@@ -23,7 +24,8 @@ Use this checklist for every pull request — reviewers and authors share respon
 
 ## Reviewer — Design
 
-- [ ] Changes belong in the correct directory (`apps/`, `services/`, `packages/`, etc.)
+- [ ] Changes belong in the correct directory (`apps/`, `services/`,
+  `packages/`, etc.)
 - [ ] No unnecessary abstraction or premature optimization
 - [ ] Significant decisions have an ADR ([docs/adr/README.md](../adr/README.md))
 - [ ] Dependencies are justified and minimal
@@ -58,12 +60,13 @@ Use this checklist for every pull request — reviewers and authors share respon
 
 | Target Branch | Required Approvals | Code Owner Review |
 | ------------- | ------------------ | ----------------- |
-| `develop`     | ≥ 1                | Recommended       |
-| `main`        | ≥ 2                | Required          |
+| `develop` | ≥ 1 | Recommended |
+| `main` | ≥ 2 | Required |
 
 ## Feedback Guidelines
 
 - Be specific, constructive, and timely.
 - Distinguish **blockers** (must fix) from **suggestions** (nice to have).
 - Resolve all blockers before merge.
-- Authors should respond to every comment — fix, push back with rationale, or ask for clarification.
+- Authors should respond to every comment — fix, push back with rationale, or
+  ask for clarification.

@@ -34,7 +34,8 @@
 
 ## Checklist
 
-- [ ] Commit messages follow [Conventional Commits](docs/standards/commit_convention.md)
+- [ ] Commit messages follow [Conventional
+  Commits](docs/standards/commit_convention.md)
 - [ ] Branch naming follows [branch strategy](docs/standards/branch_strategy.md)
 - [ ] `.editorconfig` rules respected
 - [ ] Documentation updated (if applicable)

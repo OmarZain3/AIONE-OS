@@ -9,16 +9,16 @@ Sprint index and operating model for AIONE delivery.
 | Duration | 2 weeks |
 | Planning | Day 1 — pull from [master_backlog.md](../master_backlog.md) |
 | Review | Last day — update [execution_ledger.md](../execution_ledger.md) |
-| Branch base | `develop` per [branch strategy](../../docs/standards/branch_strategy.md) |
+| Branch base | `develop` per branch strategy doc |
 
 ## Sprint Index
 
 | Sprint | Window | Theme | Status | Exit criteria |
 | ------ | ------ | ----- | ------ | ------------- |
-| 001 | 2026-06 W1–2 | Foundation | **Complete** | `v0.1.0-alpha` tagged; CI + Compose infra live |
-| 002 | 2026-06 W3 – 2026-07 W2 | Application scaffold | **In progress** | Full stack healthy; E2E smoke; docs reconciled → `v0.2.0-beta` |
-| 003 | 2026-07 W3 – 2026-08 W2 | Generator pipeline | Planned | `definitions/` + CI drift check |
-| 004 | 2026-08 W3 – 2026-09 W2 | Knowledge graph + packages | Planned | `graph.yaml` validated; shared package consumed |
+| 001 | 2026-06 W1–2 | Foundation | **Complete** | v0.1.0-alpha; CI; Compose |
+| 002 | 2026-06 W3–07 | App scaffold | **In progress** | Stack; E2E; v0.2 docs |
+| 003 | 2026-07 W3 – 08 W2 | Generators | Planned | definitions/ + CI drift |
+| 004 | 2026-08 W3 – 09 W2 | KG + packages | Planned | graph.yaml; package use |
 
 ## Sprint 002 — Current
 
@@ -51,7 +51,9 @@ Sprint index and operating model for AIONE delivery.
 
 ## Sprint Folder Convention
 
-Create `sprints/NNN-short-name/` only when a sprint needs artifacts beyond this index (retros, notes). Default: track work via backlog IDs and execution ledger — no per-sprint files required.
+Create `sprints/NNN-short-name/` only when a sprint needs artifacts beyond this
+index (retros, notes). Default: track work via backlog IDs and execution ledger
+— no per-sprint files required.
 
 ## References
 
@@ -59,4 +61,5 @@ Create `sprints/NNN-short-name/` only when a sprint needs artifacts beyond this 
 - [Master backlog](../master_backlog.md)
 - [Release plan](../release_plan.md)
 - [Decision log](../decision_log.md)
-- ADRs: [0001](../../docs/adr/0001-repository-strategy.md) – [0005](../../docs/adr/0005-knowledge-graph.md)
+- ADRs: [0001](../../docs/adr/0001-repository-strategy.md) –
+  [0005](../../docs/adr/0005-knowledge-graph.md)

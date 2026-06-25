@@ -1,10 +1,11 @@
 # Commit Convention
 
-AIONE follows [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages.
+AIONE follows [Conventional Commits](https://www.conventionalcommits.org/) for
+all commit messages.
 
 ## Format
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -12,27 +13,27 @@ AIONE follows [Conventional Commits](https://www.conventionalcommits.org/) for a
 [optional footer(s)]
 ```
 
-| Part          | Required | Rules                                              |
+| Part | Required | Rules |
 | ------------- | -------- | -------------------------------------------------- |
-| `type`        | Yes      | See allowed types below                            |
-| `scope`       | No       | Component affected (e.g. `backend`, `frontend`)    |
-| `description` | Yes      | Imperative mood, lowercase, no trailing period     |
-| `body`        | No       | Additional context, wrapped at 72 characters     |
-| `footer`      | No       | Breaking changes, issue references                 |
+| `type` | Yes | See allowed types below |
+| `scope` | No | Component affected (e.g. `backend`, `frontend`) |
+| `description` | Yes | Imperative mood, lowercase, no trailing period |
+| `body` | No | Additional context, wrapped at 72 characters |
+| `footer` | No | Breaking changes, issue references |
 
 ## Types
 
-| Type       | When to Use                                      |
+| Type | When to Use |
 | ---------- | ------------------------------------------------ |
-| `feat`     | New feature or user-facing capability            |
-| `fix`      | Bug fix                                          |
-| `docs`     | Documentation only                               |
-| `refactor` | Code restructuring without behavior change       |
-| `test`     | Adding or correcting tests                       |
-| `build`    | Build system, dependencies, or tooling           |
-| `ci`       | CI/CD pipeline configuration                     |
-| `perf`     | Performance improvement                          |
-| `chore`    | Maintenance tasks that don't fit other types     |
+| `feat` | New feature or user-facing capability |
+| `fix` | Bug fix |
+| `docs` | Documentation only |
+| `refactor` | Code restructuring without behavior change |
+| `test` | Adding or correcting tests |
+| `build` | Build system, dependencies, or tooling |
+| `ci` | CI/CD pipeline configuration |
+| `perf` | Performance improvement |
+| `chore` | Maintenance tasks that don't fit other types |
 
 ## Scopes
 
@@ -44,7 +45,7 @@ Omit scope for repository-wide changes (e.g. root config).
 
 ## Examples
 
-```
+```text
 feat(services): add health check endpoint
 fix(apps): resolve login redirect loop
 docs: add branch strategy guide
@@ -60,7 +61,7 @@ chore: bump development dependencies
 
 Indicate breaking changes with `!` after the type/scope or in the footer:
 
-```
+```text
 feat(services)!: remove deprecated v1 API endpoints
 
 BREAKING CHANGE: v1 endpoints removed; migrate to v2.
@@ -68,7 +69,7 @@ BREAKING CHANGE: v1 endpoints removed; migrate to v2.
 
 ## Issue References
 
-```
+```text
 fix(services): correct token expiry calculation
 
 Closes #108

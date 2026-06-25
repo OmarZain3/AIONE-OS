@@ -1,8 +1,11 @@
 # Roadmap
 
-High-level delivery timeline for AIONE. Aligned with [Semantic Versioning](../docs/standards/versioning.md) and [branch strategy](../docs/standards/branch_strategy.md).
+High-level delivery timeline for AIONE. Aligned with [Semantic
+Versioning](../docs/standards/versioning.md) and [branch
+strategy](../docs/standards/branch_strategy.md).
 
-**Current:** `v0.1.0-alpha` (foundation) · **Target:** `v0.2.0-beta` (integrated scaffold)
+**Current:** `v0.1.0-alpha` (foundation) · **Target:** `v0.2.0-beta` (integrated
+scaffold)
 
 ## Phases
 
@@ -32,7 +35,8 @@ Foundation   Scaffold     Generators   Graph+Pkgs   Product Beta
 | OpenAPI at `/api/schema/` | backend | 0003 |
 | Documentation reconciliation | docs, CHANGELOG | 0001 |
 
-**Exit criteria:** `docker compose --profile app up` healthy; CI green; E2E smoke test passes; docs reflect reality.
+**Exit criteria:** `docker compose --profile app up` healthy; CI green; E2E
+smoke test passes; docs reflect reality.
 
 ### Phase 2 — Generator Pipeline (`v0.3.0-alpha`)
 
@@ -58,7 +62,8 @@ Foundation   Scaffold     Generators   Graph+Pkgs   Product Beta
 | Shared `packages/` API client | 0001, 0004 |
 | `CODEOWNERS` enforcement | 0001 |
 
-**Exit criteria:** Graph CI validates; all apps/services registered; shared package consumed by client.
+**Exit criteria:** Graph CI validates; all apps/services registered; shared
+package consumed by client.
 
 ### Phase 4 — Product Beta (`v0.4.0-beta`)
 

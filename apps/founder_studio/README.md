@@ -1,6 +1,7 @@
 # Founder Studio
 
-Flutter client for the AIONE platform — founder dashboard, authentication, and project management.
+Flutter client for the AIONE platform — founder dashboard, authentication, and
+project management.
 
 **Version:** `0.1.0-alpha` (see `lib/core/constants.dart`)
 
@@ -12,10 +13,11 @@ Clean architecture layers under `lib/`:
 | ----- | ---- | ---- |
 | `presentation/` | pages, widgets, router, shell | UI and navigation |
 | `application/` | Riverpod providers | State and use-case orchestration |
-| `domain/` | entities, repository interfaces | Business models (no Flutter imports) |
-| `infrastructure/` | API clients, repository implementations | HTTP and secure storage |
+| `domain/` | entities, repo interfaces | Business models (no Flutter) |
+| `infrastructure/` | API clients, repo impls | HTTP and secure storage |
 
-See [ADR 0002](../../docs/adr/0002-flutter-architecture.md) for the full architectural baseline.
+See [ADR 0002](../../docs/adr/0002-flutter-architecture.md) for the full
+architectural baseline.
 
 ## Prerequisites
 
@@ -46,4 +48,5 @@ flutter gen-l10n
 
 ## Docker
 
-The web build is containerized for Compose (`Dockerfile`). The Compose service is named `frontend`; source lives in this directory.
+The web build is containerized for Compose (`Dockerfile`). The Compose service
+is named `frontend`; source lives in this directory.
