@@ -86,7 +86,9 @@ CACHES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -141,7 +143,10 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "AIONE platform backend — authentication and core services",
     "VERSION": "0.1.0-alpha",
     "TAGS": [
-        {"name": "Authentication", "description": "JWT login, refresh, and session management"},
+        {
+            "name": "Authentication",
+            "description": "JWT login, refresh, and session management",
+        },
         {"name": "Health", "description": "Service health and version metadata"},
         {"name": "Projects", "description": "Founder venture project management"},
     ],
@@ -174,5 +179,7 @@ SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=False)
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", default=False)
 CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=False)
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=0)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False
+)
 SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)

@@ -9,7 +9,10 @@ from rest_framework.response import Response
 from apps.projects.api.filters import ProjectFilter
 from apps.projects.api.serializers import ProjectSerializer
 from apps.projects.services import project_service
-from apps.projects.services.project_service import ProjectNotFoundError, ProjectValidationError
+from apps.projects.services.project_service import (
+    ProjectNotFoundError,
+    ProjectValidationError,
+)
 
 
 @extend_schema_view(
